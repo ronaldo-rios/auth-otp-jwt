@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    Int    @id @default(autoincrement())
+  name  String
+  email String @unique
+  Otp   Otp[]
+
+  @@map("users")
+}
+
+model Otp {
+  id        String   @id
+  code      String
+  expiresAt DateTime @map("expires_at")
+  used      Boolean  @default(false)
+  userId    Int      @map("user_id")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("otps")
+}
