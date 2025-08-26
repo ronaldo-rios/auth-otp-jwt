@@ -1,12 +1,16 @@
 import { RequestHandler } from 'express'
 import { sendEmail } from '../config/email'
-import { generateOtp } from '../services/otp'
+import { generateOtp, validateOtp } from '../services/otp'
 import { createUser, getUserByEmail } from '../services/user'
-import { authSiginSchema, authSigupSchema } from '../validations/auth'
+import {
+    authSigninSchema,
+    authSignupSchema,
+    useOtpSchema
+} from '../validations/auth'
 
-export const sigin: RequestHandler = async (request, response) => {
+export const signin: RequestHandler = async (request, response) => {
 
-    const data = authSiginSchema.safeParse(request.body)
+    const data = authSigninSchema.safeParse(request.body)
     if (!data.success) {
         response.json({ error: data.error.flatten((issue) => issue.message).fieldErrors })
         return
@@ -27,8 +31,8 @@ export const sigin: RequestHandler = async (request, response) => {
     response.json({ id: otp.id })
 }
 
-export const sigup: RequestHandler = async (request, response) => {
-    const data = authSigupSchema.safeParse(request.body)
+export const signup: RequestHandler = async (request, response) => {
+    const data = authSignupSchema.safeParse(request.body)
     if (!data.success) {
         response.json({ error: data.error.flatten((issue) => issue.message).fieldErrors })
         return
@@ -43,4 +47,18 @@ export const sigup: RequestHandler = async (request, response) => {
     const createdUser = await createUser(data.data.name, data.data.email)
 
     return response.status(201).json({ user: createdUser })
+}
+
+export const useOtp: RequestHandler = async (request, response) => {
+    const data = useOtpSchema.safeParse(request.body)
+    if (!data.success) {
+        response.json({ error: data.error.flatten((issue) => issue.message).fieldErrors })
+        return
+    }
+
+    const user = await validateOtp(data.data.id, data.data.code)
+    if (!user) {
+        response.json({ error: 'Código inválido ou expirado!' })
+        return
+    }
 }
