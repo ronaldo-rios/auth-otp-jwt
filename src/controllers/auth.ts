@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express'
+import { sendEmail } from '../config/email'
 import { generateOtp } from '../services/otp'
 import { createUser, getUserByEmail } from '../services/user'
-import { sendEmail } from '../utils/email'
 import { authSiginSchema, authSigupSchema } from '../validations/auth'
 
 export const sigin: RequestHandler = async (request, response) => {

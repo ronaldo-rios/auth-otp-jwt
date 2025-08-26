@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid'
-import { prisma } from '../utils/prisma'
+import { prisma } from '../config/prisma'
 
 export const generateOtp = async (userId: number) => {
     const code = Array.from({ length: 6 }, () => 
