@@ -1,0 +1,23 @@
+import { v4 as uuid } from 'uuid'
+import { prisma } from '../utils/prisma'
+
+export const generateOtp = async (userId: number) => {
+    const code = Array.from({ length: 6 }, () => 
+        Math.floor(Math.random() * 10)
+    ).join('')
+
+    const expiresAt = new Date()
+    expiresAt.setMinutes(expiresAt.getMinutes() + 30)
+
+    const otp = await prisma.otp.create({
+        data: {
+            id: uuid(),
+            code: code,
+            expiresAt: expiresAt,
+            used: false,
+            userId: userId
+        }
+    })
+
+    return otp
+}
