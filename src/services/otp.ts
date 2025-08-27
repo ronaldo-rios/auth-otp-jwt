@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid'
 import { prisma } from '../config/prisma'
 
-export const generateOtp = async (userId: number) => {
+export const generateOTP = async (userId: number) => {
     const code = Array.from({ length: 6 }, () => 
         Math.floor(Math.random() * 10)
     ).join('')
@@ -22,7 +22,7 @@ export const generateOtp = async (userId: number) => {
     return otp
 }
 
-export const validateOtp = async (id: string, code: string) => {
+export const validateOTP = async (id: string, code: string) => {
     const otp = await prisma.otp.findFirst({
         select: {
             user: true
