@@ -12,6 +12,6 @@ server.use(express.json())
 server.use('/api', router)
 
 const port = process.env.PORT
-server.listen(port, () => console.log(
-    `Server running: http://localhost:${port}`)
+server.listen(port, () =>
+  console.log(`Server running: http://localhost:${port}`),
 )
