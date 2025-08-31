@@ -5,9 +5,9 @@ import { HttpStatus } from '../helpers/http-status'
 import { generateOTP, validateOTP } from '../services/otp'
 import { createUser, getUserByEmail, getUserById } from '../services/user'
 import {
-  authSigninSchema,
-  authSignupSchema,
-  useOtpSchema,
+    authSigninSchema,
+    authSignupSchema,
+    useOtpSchema,
 } from '../validations/auth'
 
 export const signin: RequestHandler = async (request, response) => {
@@ -78,7 +78,7 @@ export const useOtp: RequestHandler = async (request, response) => {
   response.json({ token, user })
 }
 
-export const greeting = async (request: Request, response: Response) => {
+export const greeting: RequestHandler = async (request: Request, response: Response) => {
   if (!request.userId)
     return response
       .status(HttpStatus.UNAUTHORIZED)
