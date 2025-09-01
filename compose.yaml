@@ -1,0 +1,43 @@
+services:
+  application:
+    container_name: node_otp
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT}:${PORT}"
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - PORT=${PORT}
+      - DATABASE_URL=${DATABASE_URL}
+    command: >
+      sh -c "
+      while ! nc -z postgres_db_otp 5432; do
+        echo 'Waiting for PostgreSQL...';
+        sleep 1;
+      done;
+      npx prisma generate && 
+      npx prisma migrate deploy && 
+      npm run dev
+      "
+  db:
+    image: postgres:latest
+    container_name: postgres_db_otp
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_INITDB_ARGS: '--lc-collate=en_US.utf8 --lc-ctype=en_US.utf8'
+    ports:
+      - '${DATABASE_PORT}:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
